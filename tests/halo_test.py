@@ -352,6 +352,13 @@ def run_checks(m, version, profile, results):
         return v == [version, True], f"{v}"
     check("Erweiterung aktiv und richtige Version", addon, results)
 
+    def folder_header():
+        res = m.js("""const a3 = await toMail();
+          return { header: a3.document.getElementById("folderPaneHeaderBar").hidden,
+                   toolbar: ["get-messages", "write-message"].filter(id => d.querySelector(`#unifiedToolbarContent li[item-id="${id}"]`)) };""")
+        return res["header"] and len(res["toolbar"]) == 2, f"{res}"
+    check("Ordnerliste ohne eigene Knopfzeile, Abrufen/Verfassen in der Toolbar", folder_header, results)
+
     def list_width():
         res = m.js("""
           const out = {};
